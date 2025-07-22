@@ -12,6 +12,12 @@ var contadorMinas = document.getElementById('contadorMinas');
 var gameOverDiv = document.getElementById('gameOver');
 var contadorDiferencia = document.getElementById('contadorDiferencia');
 var iniciarJuego = document.getElementById('iniciarJuego');
+var modoOscuro = document.getElementById('modoOscuro');
+var modoClaro = document.getElementById('modoClaro');
+var nombreJugador = document.getElementById('nombreJugador');
+var validacion = document.getElementById('validacion');
+var nombreTexto = document.getElementById('nombreTexto');
+iniciarJuego.disabled = true; // Deshabilitar el botón al inicio
 
 // Estado global del juego encapsulado
 var juego = {
@@ -19,6 +25,30 @@ var juego = {
     minasTotales: 0,          // Total de minas del juego actual
     banderasPlantadas: 0      // Cuántas banderas hay actualmente
 };
+
+nombreJugador.addEventListener('input', function() {
+    if (nombreJugador.value.trim().length <= 3 ) {
+        validacion.textContent = "El nombre debe tener más de 3 caracteres.";
+        nombreTexto.textContent = "";
+    } else {
+        validacion.textContent = "";
+        nombreTexto.textContent = "Hola " + nombreJugador.value;
+        iniciarJuego.disabled = false;
+    }
+});
+
+
+modoOscuro.addEventListener('click', function() {
+    document.body.classList.add('modo-oscuro');
+    modoOscuro.style.display = 'none';
+    modoClaro.style.display = 'block';
+});
+
+modoClaro.addEventListener('click', function() {
+    document.body.classList.remove('modo-oscuro');
+    modoClaro.style.display = 'none';
+    modoOscuro.style.display = 'block';
+});
 
 // Temporizador visual que cuenta regresivamente desde 5 minutos
 function iniciarTemporizador() {
@@ -30,7 +60,7 @@ function iniciarTemporizador() {
         if (tiempoRestante <= 0) {
             clearInterval(intervaloID);
             tiempoSpan.textContent = "00:00";
-            alert("¡Se acabó el tiempo!");
+            gameOver();
             return;
         }
 
@@ -152,7 +182,57 @@ function click(casilla) {
         gameOver();
     } else {
         casilla.style.backgroundColor = '#d0d0d0';
-        // Lógica de números viene después
+        var minasAlrededor = contarMinasAlrededor(casilla);
+        if (minasAlrededor > 0) {
+            casilla.textContent = minasAlrededor;
+            casilla.style.color =
+                minasAlrededor === 1 ? 'blue' :
+                minasAlrededor === 2 ? 'green' :
+                'red';
+        } else {
+            casilla.textContent = '';
+            revelarAdyacentes(casilla);
+        }
+    }
+}
+
+// cuenta las minas alrededor de la casilla seleccionada
+function contarMinasAlrededor(casilla) {
+    var index = parseInt(casilla.getAttribute('id'));
+    var filas = Math.sqrt(juego.casillas.length);
+    var minasAlrededor = 0;
+
+    // Verifica las 8 casillas adyacentes
+    for (var i = -1; i <= 1; i++) {
+        for (var j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+            var vecinoIndex = index + i * filas + j;
+            if (vecinoIndex >= 0 && vecinoIndex < juego.casillas.length &&
+                juego.casillas[vecinoIndex].classList.contains('bomba')) {
+                minasAlrededor++;
+            }
+        }
+    }
+    return minasAlrededor;
+}
+
+// revela las casilla adyacentes que no tengas minas alrededor
+function revelarAdyacentes(casilla) {
+    var index = parseInt(casilla.getAttribute('id'));
+    var filas = Math.sqrt(juego.casillas.length);
+
+    // Verifica las 8 casillas adyacentes
+    for (var i = -1; i <= 1; i++) {
+        for (var j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+            var vecinoIndex = index + i * filas + j;
+            if (vecinoIndex >= 0 && vecinoIndex < juego.casillas.length) {
+                var vecinoCasilla = juego.casillas[vecinoIndex];
+                if (!vecinoCasilla.classList.contains('revelada') && !vecinoCasilla.classList.contains('bomba')) {
+                    click(vecinoCasilla);
+                }
+            }
+        }
     }
 }
 
@@ -172,10 +252,17 @@ function añadirBandera(casilla) {
 
     actualizarContadorMinas();
 }
-
+// funcion de juego terminado
 function gameOver() {
     gameOverDiv.style.display = 'block';
+    juego.casillas.forEach(casilla => {
+    casilla.style.pointerEvents = 'none'; 
+    casilla.style.opacity = '0.6'; 
+    });
     gameOverDiv.innerHTML = '<h2 class = "gameOver">¡Perdiste!</h2><h2 class = "gameOver">¡Juego Terminado!</h2>'
-    contenido.innerHTML = '';
     reiniciarTemporizador();
+}
+
+function gameWon() {
+
 }
