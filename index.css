@@ -148,8 +148,10 @@ body.modo-oscuro .github-link:hover svg {
 }
 
 .contenido {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(8, 40px);
+    grid-auto-rows: 40px;
+    gap: 2px;
     justify-content: center;
     gap: 2px;
     padding: 10px;
@@ -201,6 +203,13 @@ body.modo-oscuro .github-link:hover svg {
     text-align: center;
     margin-top: 20px;
 }
+
+.gameWon {
+    color: green;
+    text-align: center;
+    margin-top: 20px;
+}
+
 body.modo-oscuro {
     background-color: #121212;
     color: #f1f1f1;

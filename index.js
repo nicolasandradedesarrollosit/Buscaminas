@@ -133,6 +133,7 @@ function crearBuscaminas() {
 
 // Genera los elementos del tablero y les asigna eventos
 function generarTablero(filas, columnas, minas) {
+    contenido.style.gridTemplateColumns = "repeat(" + columnas + ", 40px)";
     var arrayBombas = Array(minas).fill('bomba');
     var arrayVacios = Array(filas * columnas - minas).fill('vacio');
     var arrayCompleto = arrayVacios.concat(arrayBombas);
@@ -165,6 +166,31 @@ function generarTablero(filas, columnas, minas) {
     }
 }
 
+function obtenerVecinos(index, filas, columnas) {
+    var vecinos = [];
+    var filaActual = Math.floor(index / columnas);
+    var columnaActual = index % columnas;
+
+    for (var i = -1; i <= 1; i++) {
+        for (var j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+
+            var nuevaFila = filaActual + i;
+            var nuevaColumna = columnaActual + j;
+
+            if (
+                nuevaFila >= 0 && nuevaFila < filas &&
+                nuevaColumna >= 0 && nuevaColumna < columnas
+            ) {
+                var vecinoIndex = nuevaFila * columnas + nuevaColumna;
+                vecinos.push(vecinoIndex);
+            }
+        }
+    }
+
+    return vecinos;
+}
+
 // Muestra cuántas minas faltan por marcar
 function actualizarContadorMinas() {
     contadorDiferencia.textContent = "Diferencias de minas y banderas plantadas: " + (juego.minasTotales - juego.banderasPlantadas);
@@ -180,39 +206,75 @@ function click(casilla) {
         casilla.textContent = '💣';
         casilla.style.backgroundColor = '#ff4d4d';
         gameOver();
+        return;
+    }
+
+    casilla.style.backgroundColor = '#d0d0d0';
+    var minasAlrededor = contarMinasAlrededor(casilla);
+
+    if (minasAlrededor > 0) {
+        casilla.textContent = minasAlrededor;
+        casilla.style.color =
+            minasAlrededor === 1 ? 'blue' :
+            minasAlrededor === 2 ? 'green' :
+            'red';
     } else {
-        casilla.style.backgroundColor = '#d0d0d0';
-        var minasAlrededor = contarMinasAlrededor(casilla);
-        if (minasAlrededor > 0) {
-            casilla.textContent = minasAlrededor;
-            casilla.style.color =
-                minasAlrededor === 1 ? 'blue' :
-                minasAlrededor === 2 ? 'green' :
-                'red';
-        } else {
-            casilla.textContent = '';
-            revelarAdyacentes(casilla);
+        casilla.textContent = '';
+        revelarAdyacentes(casilla);
+    }
+
+    gameWon();
+}
+
+function dobleClick(casilla) {
+    if (!casilla.classList.contains('revelada')) return;
+
+    var numeroActual = parseInt(casilla.textContent);
+    if (isNaN(numeroActual)) return;
+
+    console.log("Doble click activado sobre: ", casilla);
+
+    var index = parseInt(casilla.getAttribute('id'));
+    var filas = Math.sqrt(juego.casillas.length);
+    var columnas = filas;
+
+    var vecinos = obtenerVecinos(index, filas, columnas);
+    var banderasCerca = 0;
+
+    for (var i = 0; i < vecinos.length; i++) {
+        var vecino = juego.casillas[vecinos[i]];
+        if (vecino.classList.contains('bandera')) {
+            banderasCerca++;
         }
     }
+
+    if (banderasCerca === numeroActual) {
+        for (var i = 0; i < vecinos.length; i++) {
+            var vecino = juego.casillas[vecinos[i]];
+            if (!vecino.classList.contains('bandera') && !vecino.classList.contains('revelada')) {
+                click(vecino);
+            }
+        }
+    }
+
+    gameWon(); // también verificamos al final
 }
+
 
 // cuenta las minas alrededor de la casilla seleccionada
 function contarMinasAlrededor(casilla) {
     var index = parseInt(casilla.getAttribute('id'));
     var filas = Math.sqrt(juego.casillas.length);
-    var minasAlrededor = 0;
+    var columnas = filas;
+    var vecinos = obtenerVecinos(index, filas, columnas);
 
-    // Verifica las 8 casillas adyacentes
-    for (var i = -1; i <= 1; i++) {
-        for (var j = -1; j <= 1; j++) {
-            if (i === 0 && j === 0) continue;
-            var vecinoIndex = index + i * filas + j;
-            if (vecinoIndex >= 0 && vecinoIndex < juego.casillas.length &&
-                juego.casillas[vecinoIndex].classList.contains('bomba')) {
-                minasAlrededor++;
-            }
+    var minasAlrededor = 0;
+    for (var i = 0; i < vecinos.length; i++) {
+        if (juego.casillas[vecinos[i]].classList.contains('bomba')) {
+            minasAlrededor++;
         }
     }
+
     return minasAlrededor;
 }
 
@@ -220,21 +282,18 @@ function contarMinasAlrededor(casilla) {
 function revelarAdyacentes(casilla) {
     var index = parseInt(casilla.getAttribute('id'));
     var filas = Math.sqrt(juego.casillas.length);
+    var columnas = filas;
 
-    // Verifica las 8 casillas adyacentes
-    for (var i = -1; i <= 1; i++) {
-        for (var j = -1; j <= 1; j++) {
-            if (i === 0 && j === 0) continue;
-            var vecinoIndex = index + i * filas + j;
-            if (vecinoIndex >= 0 && vecinoIndex < juego.casillas.length) {
-                var vecinoCasilla = juego.casillas[vecinoIndex];
-                if (!vecinoCasilla.classList.contains('revelada') && !vecinoCasilla.classList.contains('bomba')) {
-                    click(vecinoCasilla);
-                }
-            }
+    var vecinos = obtenerVecinos(index, filas, columnas);
+
+    for (var i = 0; i < vecinos.length; i++) {
+        var vecino = juego.casillas[vecinos[i]];
+        if (!vecino.classList.contains('revelada') && !vecino.classList.contains('bandera')) {
+            click(vecino);
         }
     }
 }
+
 
 // Marca o desmarca una bandera (click derecho)
 function añadirBandera(casilla) {
@@ -259,10 +318,28 @@ function gameOver() {
     casilla.style.pointerEvents = 'none'; 
     casilla.style.opacity = '0.6'; 
     });
-    gameOverDiv.innerHTML = '<h2 class = "gameOver">¡Perdiste!</h2><h2 class = "gameOver">¡Juego Terminado!</h2>'
+    gameOverDiv.innerHTML = '<h2 class="gameOver">¡Perdiste!</h2><h2 class="gameOver">¡Juego Terminado!</h2>'
     reiniciarTemporizador();
 }
 
 function gameWon() {
+    var totalReveladas = 0;
 
+    for (var i = 0; i < juego.casillas.length; i++) {
+        if (juego.casillas[i].classList.contains('revelada')) {
+            totalReveladas++;
+        }
+    }
+
+    var totalSeguras = juego.casillas.length - juego.minasTotales;
+
+    if (totalReveladas === totalSeguras) {
+        gameOverDiv.style.display = 'block';
+        juego.casillas.forEach(function(casilla) {
+            casilla.style.pointerEvents = 'none';
+            casilla.style.opacity = '0.6';
+        });
+        gameOverDiv.innerHTML = '<h2 class="gameWon">¡Ganaste!</h2><h2 class="gameWon">¡Juego Terminado!</h2>';
+        reiniciarTemporizador();
+    }
 }
