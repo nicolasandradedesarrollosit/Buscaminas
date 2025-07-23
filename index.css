@@ -236,6 +236,82 @@ body.modo-oscuro .github-link:hover svg {
     margin-top: 20px;
 }
 
+#ranking {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: "Segoe UI", sans-serif;
+}
+
+#ranking h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 8px;
+}
+
+/* Estilo para la tabla del ranking */
+#ranking table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+#ranking th, #ranking td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#ranking th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    color: #333;
+}
+
+#ranking tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+#ranking td {
+    color: #555;
+    text-align: center;
+}
+
+body.modo-oscuro #ranking {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+body.modo-oscuro #ranking h2 {
+    color: #f0f0f0;
+    border-color: #444;
+}
+
+body.modo-oscuro #ranking table {
+    background-color: transparent;
+}
+
+body.modo-oscuro #ranking th {
+    background-color: #333;
+    color: #eee;
+    border-bottom: 1px solid #444;
+}
+
+body.modo-oscuro #ranking td {
+    color: #ccc;
+    border-bottom: 1px solid #444;
+}
+
+body.modo-oscuro #ranking tbody tr:hover {
+    background-color: #2c2c2c;
+}
+
 body.modo-oscuro {
     background-color: #121212;
     color: #f1f1f1;

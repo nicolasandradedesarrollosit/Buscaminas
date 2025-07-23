@@ -57,9 +57,9 @@ document.getElementById("contactForm").addEventListener("submit", function (e) {
   if (valido) {
     var asunto = encodeURIComponent("Consulta desde el Buscaminas");
     var cuerpo = encodeURIComponent(
-      `Nombre: ${nombre}\nEmail: ${email}\n\nMensaje:\n${mensaje}`
+      `${mensaje}`
     );
-    window.location.href = `mailto:tuemail@ejemplo.com?subject=${asunto}&body=${cuerpo}`;
+    window.location.href = `mailto:nicolasandradedesarrollos@gmail.com?subject=${asunto}&body=${cuerpo}`;
   }
 });
 

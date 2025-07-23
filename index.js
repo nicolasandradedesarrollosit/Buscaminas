@@ -18,6 +18,13 @@ var nombreJugador = document.getElementById('nombreJugador');
 var validacion = document.getElementById('validacion');
 var nombreTexto = document.getElementById('nombreTexto');
 iniciarJuego.disabled = true; // Deshabilitar el botón al inicio
+var loose = new Audio('loose.mp3'); // Sonido de perder
+var win = new Audio('win.wav'); // Sonido de ganar
+var ranking = document.getElementById('ranking');
+
+document.addEventListener("DOMContentLoaded", function() {
+    mostrarTablaDePartidas();
+});
 
 // Estado global del juego encapsulado
 var juego = {
@@ -320,6 +327,8 @@ function gameOver() {
     });
     gameOverDiv.innerHTML = '<h2 class="gameOver">¡Perdiste!</h2><h2 class="gameOver">¡Juego Terminado!</h2>'
     reiniciarTemporizador();
+    loose.play(); // Reproduce el sonido de perder
+    
 }
 
 function gameWon() {
@@ -334,6 +343,12 @@ function gameWon() {
     var totalSeguras = juego.casillas.length - juego.minasTotales;
 
     if (totalReveladas === totalSeguras) {
+        var duracion = obtenerDuracionJugando();
+        var nombre = nombreJugador.value;
+
+        guardarPartida(nombre, duracion); 
+        win.play(); 
+
         gameOverDiv.style.display = 'block';
         juego.casillas.forEach(function(casilla) {
             casilla.style.pointerEvents = 'none';
@@ -342,4 +357,69 @@ function gameWon() {
         gameOverDiv.innerHTML = '<h2 class="gameWon">¡Ganaste!</h2><h2 class="gameWon">¡Juego Terminado!</h2>';
         reiniciarTemporizador();
     }
+    mostrarTablaDePartidas();
+    
+}
+
+function obtenerDuracionJugando() {
+    var tiempoUsado = 300 - tiempoRestante; 
+    var minutos = Math.floor(tiempoUsado / 60);
+    var segundos = tiempoUsado % 60;
+    return minutos.toString().padStart(2, '0') + ":" + segundos.toString().padStart(2, '0');
+}
+
+// Calcula un puntaje en base a duración
+function calcularPuntaje(duracion) {
+    var partes = duracion.split(":");
+    var minutos = parseInt(partes[0]);
+    var segundos = parseInt(partes[1]);
+    return 1000 - (minutos * 60 + segundos); 
+}
+
+// Guarda la partida en localStorage
+function guardarPartida(nombre, duracion) {
+    var partidas = JSON.parse(localStorage.getItem("partidas")) || [];
+
+    var nuevaPartida = {
+        nombre: nombre,
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString(),
+        duracion: duracion,
+        puntaje: calcularPuntaje(duracion)
+    };
+
+    partidas.push(nuevaPartida);
+    localStorage.setItem("partidas", JSON.stringify(partidas));
+}
+
+function obtenerPartidasComoFetch() {
+    return new Promise(function(resolve) {
+        var partidas = JSON.parse(localStorage.getItem("partidas")) || [];
+        resolve(partidas);
+    });
+}
+
+function mostrarTablaDePartidas() {
+    obtenerPartidasComoFetch().then(function(partidas) {
+        if (partidas.length === 0) return;
+
+        var tablaHTML = "<h3 style='text-align:center'>Ranking de Partidas</h3>";
+        tablaHTML += "<table>";
+        tablaHTML += "<thead><tr><th>Nombre</th><th>Fecha</th><th>Hora</th><th>Duración</th><th>Puntaje</th></tr></thead><tbody>";
+        
+        partidas.forEach(function(p) {
+            tablaHTML += "<tr>" +
+                "<td>" + p.nombre + "</td>" +
+                "<td>" + p.fecha + "</td>" +
+                "<td>" + p.hora + "</td>" +
+                "<td>" + p.duracion + "</td>" +
+                "<td>" + p.puntaje + "</td>" +
+            "</tr>";
+        });
+
+        tablaHTML += "</tbody></table>";
+        ranking.innerHTML = tablaHTML;
+
+
+    });
 }
