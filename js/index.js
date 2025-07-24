@@ -148,7 +148,7 @@ function generarTablero(filas, columnas, minas) {
   var arrayCompleto= arrayVacios.concat(arrayBombas).sort(function () { return Math.random() - 0.5; });
 
   juego.casillas = [];
-  contadorMinas.textContent = 'Minas restantes: ' + minas;
+  contadorMinas.textContent = 'Minas: ' + minas;
 
   for (var i = 0; i < filas * columnas; i++) {
     var c = document.createElement('div');
@@ -193,7 +193,7 @@ function click(casilla) {
     casilla.textContent = '';
     revelarAdyacentes(casilla);
   }
-
+  
   gameWon();
 }
 
