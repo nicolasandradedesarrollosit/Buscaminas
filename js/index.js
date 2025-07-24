@@ -19,8 +19,8 @@ var ranking               = document.getElementById('ranking');
 
 iniciarJuego.disabled = true;
 
-var win   = new Audio('/public/win.wav');
-var loose = new Audio('/public/loose.mp3');
+var win   = new Audio('public/win.wav');
+var loose = new Audio('public/loose.mp3');
 
 var tiempoRestante    = 300;
 var intervaloID       = null;
