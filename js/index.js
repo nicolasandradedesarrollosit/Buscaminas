@@ -275,11 +275,8 @@ function bloquearTablero() {
     juego.casillas[i].style.opacity = '0.6';
   }
 }
-
 // ==========================
-// Helpers (solo las “duras” comentadas)
-// ==========================
-
+// Lógica de minas y adyacentes
 /**
  * Devuelve los índices de las casillas vecinas (8 direcciones) válidas.
  */
