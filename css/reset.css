@@ -1,0 +1,38 @@
+/* Reset CSS simple pero potente */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background-color: #fff;
+  color: #000;
+}
+
+/* Enlaces sin subrayado por defecto */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Listas sin viñetas */
+ul, ol {
+  list-style: none;
+}
+
+/* Botones y formularios sin estilos agresivos */
+button, input, select, textarea {
+  font: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* Imágenes adaptativas */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

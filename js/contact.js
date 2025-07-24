@@ -1,8 +1,7 @@
-// funciones de contacto
 var modoOscuro = document.getElementById('modoOscuro');
 var modoClaro = document.getElementById('modoClaro');
 
-modoClaro.style.display = 'none'; // Ocultar el botón de modo claro al inicio
+modoClaro.style.display = 'none'; 
 
 modoOscuro.addEventListener('click', function() {
     document.body.classList.add('modo-oscuro');
@@ -19,7 +18,6 @@ modoClaro.addEventListener('click', function() {
 document.getElementById("contactForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  // Limpiar mensajes de error
   document.getElementById("errorNombre").textContent = "";
   document.getElementById("errorEmail").textContent = "";
   document.getElementById("errorMensaje").textContent = "";
@@ -30,7 +28,6 @@ document.getElementById("contactForm").addEventListener("submit", function (e) {
 
   var valido = true;
 
-  // Validación nombre alfanumérico
   var regexNombre = /^[a-zA-Z0-9\s]+$/;
   if (nombre === "" || !regexNombre.test(nombre)) {
     document.getElementById("errorNombre").textContent =
@@ -38,7 +35,6 @@ document.getElementById("contactForm").addEventListener("submit", function (e) {
     valido = false;
   }
 
-  // Validación email
   var regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!regexEmail.test(email)) {
     document.getElementById("errorEmail").textContent =
@@ -46,14 +42,12 @@ document.getElementById("contactForm").addEventListener("submit", function (e) {
     valido = false;
   }
 
-  // Validación mensaje
   if (mensaje.length <= 5) {
     document.getElementById("errorMensaje").textContent =
       "El mensaje debe tener más de 5 caracteres.";
     valido = false;
   }
 
-  // Si todo es válido, abrir el cliente de correo
   if (valido) {
     var asunto = encodeURIComponent("Consulta desde el Buscaminas");
     var cuerpo = encodeURIComponent(
