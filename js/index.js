@@ -141,7 +141,8 @@ function crearBuscaminas() {
 }
 
 function generarTablero(filas, columnas, minas) {
-  contenido.style.gridTemplateColumns = 'repeat(' + columnas + ', 40px)';
+  contenido.innerHTML = '';
+  contenido.style.gridTemplateColumns = `repeat(${columnas}, 40px)`;
 
   var arrayBombas  = Array(minas).fill('bomba');
   var arrayVacios  = Array(filas * columnas - minas).fill('vacio');
