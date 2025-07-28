@@ -67,6 +67,7 @@ volverAtras.addEventListener("click", function () {
   contenido.innerHTML = "";
   contadorDiferencia.textContent = "";
   contadorMinas.textContent = "";
+  contenido.display = "none";
 });
 
 modoOscuro.addEventListener("click", function () {
