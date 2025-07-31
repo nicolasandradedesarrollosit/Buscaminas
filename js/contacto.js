@@ -15,7 +15,7 @@ modoClaro.addEventListener("click", function () {
   modoOscuro.style.display = "block";
 });
 
-document.getElementById("contactForm").addEventListener("submit", function (e) {
+document.getElementById("contacto").addEventListener("submit", function (e) {
   e.preventDefault();
 
   document.getElementById("errorNombre").textContent = "";
@@ -50,7 +50,10 @@ document.getElementById("contactForm").addEventListener("submit", function (e) {
 
   if (valido) {
     var asunto = encodeURIComponent("Consulta desde el Buscaminas");
-    var cuerpo = encodeURIComponent(`${mensaje}`);
+    var cuerpo = encodeURIComponent(`${mensaje} \n\nDe: ${nombre}\nEmail: ${email}`);
     window.location.href = `mailto:nicolasandradedesarrollos@gmail.com?subject=${asunto}&body=${cuerpo}`;
   }
+});
+addEventListener("DOMContentLoaded", function () {
+console.log("El DOM ha sido cargado completamente.");
 });
